@@ -79,3 +79,17 @@ def humidityHandler(evt) {
     	log.debug "Humidity is fine at $myHumidity"
     }
 }
+
+private send(msg) {
+    if ( sendPushMessage != "No" ) {
+        log.debug( "sending push message" )
+        sendPush( msg )
+    }
+
+    if ( phone ) {
+        log.debug( "sending text message" )
+        sendSms( phone, msg )
+    }
+
+    log.debug msg
+}
