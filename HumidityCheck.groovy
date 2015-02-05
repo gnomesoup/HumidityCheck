@@ -70,7 +70,7 @@ def humidityHandler(evt) {
     switchState = (switchState == null) ? "off" : "on"
     def powerState = power1.latestValaue("power")
     log.debug "Power state:$powerState"
-    powerState = if (powerState == null) ? 11 : powerState
+    powerState = (powerState == null) ? 11 : powerState
     if (powerState < 1) {
     	send("The humidifier needs water!")
     }
