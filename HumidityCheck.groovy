@@ -31,7 +31,8 @@ preferences {
 	}
     section("Control this device"){
     	input "switch1", "capability.switch", title: "Find a humidifier";
-        //input "power1", "capability.powerMeter", title: "And it's power consumption"
+        input "power1", "capability.powerMeter", title: "And it's power consumption"
+        input "reset1", "capability.reset", title: "Let it reset"
     }
     section("When the humidity level reaches...") {
 		// Gather max and min for humidity
