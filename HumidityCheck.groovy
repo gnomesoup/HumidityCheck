@@ -31,8 +31,8 @@ preferences {
 	}
     section("Control this device"){
     	input "switch1", "capability.switch", title: "Find a humidifier";
-        input "power1", "capability.powerMeter", title: "And it's power consumption"
-        input "reset1", "capability.reset", title: "Reset this device for power status"
+        input "humPower", "capability.powerMeter", title: "And it's power consumption"
+        input "refresh1", "capability.refresh", title: "Refresh this device for power status"
     }
     section("When the humidity level reaches...") {
 		// Gather max and min for humidity
@@ -57,7 +57,7 @@ def updated() {
 
 def intitalize() {
 	subscribe(sensor1, "humidity", humidityHandler)
-	subscribe(power1, "power", powerHandler)
+	subscribe(humPower, "power", powerHandler)
 }
 
 def humidityHandler(evt) {
@@ -70,24 +70,20 @@ def humidityHandler(evt) {
     //def switchPower = power1.latestValue("power")
     log.debug "Switch state:$switchState"
     switchState = (switchState == null) ? "off" : "on"
-    def powerState = power1.latestValaue("power")
-    log.debug "Power state:$powerState"
-    powerState = (powerState == null) ? 11 : powerState
-    if (powerState < 1) {
-    	send("The humidifier needs water!")
-    }
+    
     if (evt.doubleValue >= humHigh && switchState == "on") {
     	log.debug "Turning humidifier off. Humidity is at $myHumidity."
         switch1?.off()
     } else if (evt.doubleValue <= humLow && switchState == "off") {
-   		log.debug "Turning humidifier on. Humidity is at $myHumidity."
+   	log.debug "Turning humidifier on. Humidity is at $myHumidity."
         switch1?.on()
     } else {
     	log.debug "Humidity is fine at $myHumidity"
     }
+    refresh1.refresh()
 }
 
-def powerHandler {
+def powerHandler(evt) {
 	log.trace "power: $evt.value, $evt"
 	if (evt.value < 1) {
 		send("Add water to the humidifier. Power: $evt.value")
