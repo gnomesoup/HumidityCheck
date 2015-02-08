@@ -68,13 +68,14 @@ def humidityHandler(evt) {
     
     def humHigh = max
     def humLow = min
-    def myHumidity = evt.value
     def switchState = switch1.latestValue("switch")
+    
     //def switchPower = power1.latestValue("power")
     log.debug "App last performed: $state.humSwitch"
     log.debug "Current switch state:$switchState"
+    log.debug "App previous humidity: $state.humidity"
     //check the current switch state, if off, make ours match
-
+    state.humidity = evt.doubleValue
     if (evt.doubleValue >= humHigh && state.humSwitch == "on") {
     	log.debug "Turning humidifier off. Humidity is at $myHumidity."
     	state.humSwitch = "off"
