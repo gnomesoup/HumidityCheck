@@ -60,6 +60,7 @@ def updated() {
 
 def intitalize() {
 	subscribe(sensor1, "humidity", humidityHandler)
+	subscribe(switch1, "switch.on", refreshHandler)
 	subscribe(humPower, "power", powerHandler)
 }
 
@@ -86,10 +87,13 @@ def humidityHandler(evt) {
         	switch1?.on()
         	state.humSwitch = "on"
     	}
-    	refresh1.refresh()
     } else {
     	log.debug "No change in state. Humidity: $myHumidity"
     }
+}
+
+def refreshHandler(evt) {
+	refresh1.refresh()
 }
 
 def powerHandler(evt) {
