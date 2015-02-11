@@ -60,7 +60,7 @@ def updated() {
 
 def intitalize() {
 	subscribe(sensor1, "humidity", humidityHandler)
-	//subscribe(switch1, "switch.on", refreshHandler)
+	subscribe(switch1, "switch.on", refreshHandler)
 	//subscribe(humPower, "power", powerHandler)
 }
 
@@ -103,7 +103,7 @@ def powerHandler() {
 	def powerLevel = switch1.currentState("power")
 	log.debug "humidifier power: $powerLevel"
 	if (powerLevel < 3 && state.humidity <= min) {
-		send("Add water to the humidifier. Power: $evt.value")
+		send("Add water to the humidifier.")
 		log.debug( "message sent for power: $evt.value" )
 	} else {
 		log.debug( "humidifier running, power: $evt.value" )
