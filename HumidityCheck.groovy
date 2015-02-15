@@ -49,6 +49,7 @@ def installed() {
 	// save the last thing we did to the switch
 	state.humSwitch = "off"
 	state.humidity = 0
+	state.water = true
 	intitalize()
 }
 
@@ -80,15 +81,15 @@ def humidityHandler(evt) {
     if (evt.doubleValue >= humHigh && state.humSwitch == "on") {
     	log.debug "Turning humidifier off. Humidity is at $myHumidity."
     	state.humSwitch = "off"
-        switch1?.off()
+        switch1.off()
     } else if (evt.doubleValue <= humLow) {
     	if (state.humSwitch == "off") {
    		log.debug "Turning humidifier on. Humidity is at $myHumidity."
-        	switch1?.on()
+        	switch1.on()
         	state.humSwitch = "on"
     	}
     	runIn(60, "refreshHandler")
-    	runIn(120, "")
+    	runIn(120, "powerHandler")
     } else {
     	log.debug "No change in state. Humidity: $myHumidity"
     }
@@ -96,13 +97,14 @@ def humidityHandler(evt) {
 
 def refreshHandler() {
 	log.debug "Sent refresh to humidifier to find power"
-	swtich1.refresh()
+	switch1.refresh()
 }
 
 def powerHandler() {
 	def powerLevel = switch1.currentState("power")
 	log.debug "humidifier power: $powerLevel"
-	if (powerLevel < 3 && state.humidity <= min) {
+	if (powerLevel < 3 && state.humidity <= min && state.water == true) {
+		state.water = false
 		send("Add water to the humidifier.")
 		log.debug( "message sent for power: $evt.value" )
 	} else {
