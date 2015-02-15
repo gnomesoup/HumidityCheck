@@ -49,7 +49,7 @@ def installed() {
 	// save the last thing we did to the switch
 	state.humSwitch = "off"
 	state.humidity = 0
-	state.water = true
+	state.needsWater = falase
 	intitalize()
 }
 
@@ -103,12 +103,16 @@ def refreshHandler() {
 def powerHandler() {
 	def powerLevel = switch1.currentState("power")
 	log.debug "humidifier power: $powerLevel"
-	if (powerLevel < 3 && state.humidity <= min && state.water == true) {
-		state.water = false
+	if (powerLevel < 3 && state.humidity <= min && state.needsWater == false) {
+		state.needsWater = true
 		send("Add water to the humidifier.")
 		log.debug( "message sent for power: $evt.value" )
 	} else {
 		log.debug( "humidifier running, power: $evt.value" )
+		if (powerLevel > 3) {
+			state.needsWater = false
+			log.debug( "Water was filled" )
+		}
 	}
 }
 
