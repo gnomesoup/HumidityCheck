@@ -2,6 +2,7 @@
  *  ST_AnyThing_AquariumController.groovy
  *
  *  Copyright 2016 Michael J. Pfammatter
+ *  Copyright 2014 Dan G Ogorchock
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -24,20 +25,15 @@
 metadata {
 	definition (name: "ST_AnyThing_AquariumController", namespace: "GnomeSoup", author: "Michael Pfammatter") {
 		capability "Configuration"
-		//capability "Illuminance Measurement"
 		capability "Temperature Measurement"
 		capability "Relative Humidity Measurement"
-		//capability "Water Sensor"
-		//capability "Motion Sensor"
 		capability "Switch"
-		//capability "Sensor"
-		//capability "Alarm"
-		capability "Contact Sensor"
+        capability "Sensor"
 		capability "Polling"
 
-		command "test"
-		//command "alarmoff"
-
+		attribute "t_Aquarium", "string"
+        attribute "t_Air", "string"
+        attribute "h_Air", "string"
 	}
 
     simulator {
@@ -47,26 +43,31 @@ metadata {
 
     // Preferences
 	preferences {
-    	//input "illuminanceSampleRate", "number", title: "Light Sensor Sampling Interval (seconds)", description: "Sampling Interval (seconds)", defaultValue: 30, required: true, displayDuringSetup: true
     	input "temphumidSampleRate", "number", title: "Temperature/Humidity Sensor Sampling Interval (seconds)", description: "Sampling Interval (seconds)", defaultValue: 30, required: true, displayDuringSetup: true
-    	//input "waterSampleRate", "number", title: "Water Sensor Sampling Interval (seconds)", description: "Sampling Interval (seconds)", defaultValue: 30, required: true, displayDuringSetup: true
-	}
+    }
 
 	// Tile Definitions
-	tiles {
-    /*
-		valueTile("illuminance", "device.illuminance", width: 1, height: 1) {
-			state("illuminance", label:'${currentValue} ${unit}', unit:"lux",
+	tiles(scale: 2) {
+    
+        multiAttributeTile(name:"richTemp", type:"generic", width: 6, height: 4) {
+			tileAttribute("device.t_Aquarium", key: "PRIMARY_CONTROL") {
+                attributeState("default",label:'${currentValue}°', unit:"dF",
 				backgroundColors:[
-					[value: 9, color: "#767676"],
-					[value: 315, color: "#ffa81e"],
-					[value: 1000, color: "#fbd41b"]
-				]
-			)
-		} 
-        */
-        valueTile("temperature", "device.temperature", width: 1, height: 1) {
-			state("temperature", label:'${currentValue}℉ Air', 
+					[value: 70, color: "#153591"],
+					[value: 75, color: "#1e9cbb"],
+					[value: 78, color: "#90d2a7"],
+					[value: 80, color: "#44b621"],
+					[value: 82, color: "#f1d801"],
+					[value: 85, color: "#d04e00"],
+					[value: 90, color: "#bc2323"]
+				])
+            }
+            tileAttribute("device.t_Aquarium", key: "SECONDARY_CONTROL") {
+            	attributeState("default", label:'Aquarium Temperature')
+            }
+		}
+        valueTile("t_Air", "device.t_Air", width: 2, height: 2) {
+			state("temperature", label:'${currentValue}℉ Air', unit:"F", 
 				backgroundColors:[
 					[value: 31, color: "#153591"],
 					[value: 44, color: "#1e9cbb"],
@@ -78,56 +79,19 @@ metadata {
 				]
 			)
 		}
-        
-        valueTile("humidity", "device.humidity", inactiveLabel: false) {
-			state "humidity", label:'${currentValue}% humidity', unit:""
-		}
-
-/*
-        standardTile("water", "device.water", width: 1, height: 1) {
-			state "dry", icon:"st.alarm.water.dry", backgroundColor:"#ffffff"
-			state "wet", icon:"st.alarm.water.wet", backgroundColor:"#53a7c0"
-		}
-
-		standardTile("motion", "device.motion", width: 1, height: 1) {
-			state("active", label:'motion', icon:"st.motion.motion.active", backgroundColor:"#53a7c0")
-			state("inactive", label:'no motion', icon:"st.motion.motion.inactive", backgroundColor:"#ffffff")
-		}
-*/        
-        standardTile("switch", "device.switch", width: 1, height: 1, canChangeIcon: true) {
+        valueTile("h_Air", "device.h_Air", width: 2, height: 2) {
+        	state("humidity", label:'${currentValue}% Air', unit:"%")
+        }
+        standardTile("switch", "device.switch", width: 2, height:2, canChangeIcon: true) {
 			state "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			state "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
 		}
 
-		standardTile("configure", "device.configure", inactiveLabel: false, decoration: "flat") {
+		standardTile("configure", "device.configure", width: 1, height: 1, decoration: "flat") {
 			state "configure", label:'', action:"configuration.configure", icon:"st.secondary.configure"
 		}
-/*
-		standardTile("contact", "device.contact", width: 1, height: 1) {
-			state("open", label:'${name}', icon:"st.contact.contact.open", backgroundColor:"#ffa81e")
-			state("closed", label:'${name}', icon:"st.contact.contact.closed", backgroundColor:"#79b821")
-		}
-
-		standardTile("alarm", "device.alarm", width: 1, height: 1) {
-			state "off", label:'off', action:'alarm.siren', icon:"st.alarm.alarm.alarm", backgroundColor:"#ffffff"
-            state "strobe", label:'', action:'alarmoff', icon:"st.secondary.strobe", backgroundColor:"#cccccc"
-            state "siren", label:'siren!', action:'alarmoff', icon:"st.alarm.beep.beep", backgroundColor:"#e86d13"
-			state "both", label:'alarm!', action:'alarmoff', icon:"st.alarm.alarm.alarm", backgroundColor:"#e86d13"
-		}
-
-		standardTile("test", "device.alarm", inactiveLabel: false, decoration: "flat") {
-			state "default", label:'', action:"test", icon:"st.secondary.test"
-		}
-       
-		standardTile("off", "device.alarm", , width: 1, height: 1) {
-			state "default", label:'Alarm', action:"alarmoff", icon:"st.secondary.off"
-		}
-		//standardTile("off", "device.alarm", inactiveLabel: false, decoration: "flat") {
-		//	state "default", label:'', action:"alarmoff", icon:"st.secondary.off"
-		//}
-*/
-        main(["temperature","humidity","switch"])
-        details(["temperature","humidity","switch","test","configure"])
+        main(["richTemp"])
+        details(["richTemp","t_Air","h_Air","switch","configure"])
 	}
 }
 
@@ -161,36 +125,7 @@ def off() {
 	log.debug "Executing 'switch off'"
 	zigbee.smartShield(text: "switch off").format()
 }
-/*
-def alarmoff() {
-	log.debug "Executing 'alarm off'"
-	zigbee.smartShield(text: "alarm off").format()
-}
 
-def strobe() {
-	log.debug "Executing 'alarm strobe'"
-	zigbee.smartShield(text: "alarm strobe").format()
-}
-
-def siren() {
-	log.debug "Executing 'alarm siren'"
-	zigbee.smartShield(text: "alarm siren").format()
-}
-
-def both() {
-	log.debug "Executing 'alarm both'"
-	zigbee.smartShield(text: "alarm both").format()
-}
-
-def test() {
-	log.debug "Executing 'alarm test'"
-	[
-		zigbee.smartShield(text: "alarm both").format(),
-		"delay 3000",
-		zigbee.smartShield(text: "alarm off").format()
-	]
-}
-*/
 def poll() {
 	//temporarily implement poll() to issue a configure() command to send the polling interval settings to the arduino
 	configure()
@@ -199,14 +134,8 @@ def poll() {
 
 def configure() {
 	log.debug "Executing 'configure'"
-    //log.debug "illuminance " + illuminanceSampleRate + "|temphumid " + temphumidSampleRate + "|water " + waterSampleRate
-    //log.debug "water " + waterSampleRate
-    //log.debug "illuminance " + illuminanceSampleRate
 	log.debug "temphumid " + temphumidSampleRate
 	[
-		//zigbee.smartShield(text: "water " + waterSampleRate).format(),
-        //"delay 1000",
-        //zigbee.smartShield(text: "illuminance " + illuminanceSampleRate).format(),
         "delay 1000",
         zigbee.smartShield(text: "temphumid " + temphumidSampleRate).format()
     ]
