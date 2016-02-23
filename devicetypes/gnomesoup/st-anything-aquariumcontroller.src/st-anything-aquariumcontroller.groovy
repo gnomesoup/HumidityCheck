@@ -30,10 +30,13 @@ metadata {
 		capability "Switch"
         capability "Sensor"
 		capability "Polling"
+        capability "waterSensor"
+        capability "Refresh"
 
 		attribute "t_Aquarium", "string"
         attribute "t_Air", "string"
         attribute "h_Air", "string"
+        attribute "HighLow", "string"
 	}
 
     simulator {
@@ -51,7 +54,7 @@ metadata {
     
         multiAttributeTile(name:"richTemp", type:"generic", width: 6, height: 4) {
 			tileAttribute("device.t_Aquarium", key: "PRIMARY_CONTROL") {
-                attributeState("default",label:'${currentValue}°', unit:"dF",
+                attributeState("default",label:'${currentValue}°',
 				backgroundColors:[
 					[value: 70, color: "#153591"],
 					[value: 75, color: "#1e9cbb"],
@@ -62,12 +65,12 @@ metadata {
 					[value: 90, color: "#bc2323"]
 				])
             }
-            tileAttribute("device.t_Aquarium", key: "SECONDARY_CONTROL") {
-            	attributeState("default", label:'Aquarium Temperature')
+            tileAttribute("device.HighLow", key: "SECONDARY_CONTROL") {
+            	attributeState("default", label:'${currentValue}')
             }
 		}
         valueTile("t_Air", "device.t_Air", width: 2, height: 2) {
-			state("temperature", label:'${currentValue}℉ Air', unit:"F", 
+			state("temperature", label:'${currentValue}° Air', unit:"dF", 
 				backgroundColors:[
 					[value: 31, color: "#153591"],
 					[value: 44, color: "#1e9cbb"],
@@ -86,12 +89,19 @@ metadata {
 			state "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 			state "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
 		}
-
+        standardTile("float", "device.float", width:2, height:2, canChangeIcon:true) {
+        	state "wet", icon:"st.alarm.water.dry", backgroundColor:"#53a7c0"
+    		state "dry", icon:"st.alarm.water.wet", backgroundColor:"#bc2323"
+        }
 		standardTile("configure", "device.configure", width: 1, height: 1, decoration: "flat") {
 			state "configure", label:'', action:"configuration.configure", icon:"st.secondary.configure"
 		}
+        standardTile("refresh", "device.refresh", width:1, height:1, decoration: "flat") {
+        	state "refresh", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+        }
+        
         main(["richTemp"])
-        details(["richTemp","t_Air","h_Air","switch","configure"])
+        details(["richTemp","t_Air","float","switch","h_Air","configure","refresh"])
 	}
 }
 
@@ -106,12 +116,38 @@ def parse(String description) {
     def value = parts.length>1?parts[1].trim():null
 
     name = value != "ping" ? name : null
-
+	
     def result = createEvent(name: name, value: value)
-
-    log.debug result
-
-    return result
+	
+    if(name == "t_Aquarium") {
+    	log.debug "state.aquaHigh = $state.aquaHigh"
+        log.debug "state.aquaLow = $state.aquaLow"
+    	state.HighLowChange = false
+    	if(value > state.aquaHigh || !state.aquaHigh) {
+        	log.debug "Updating high temperature"
+            state.aquaHigh = value
+            log.debug "state.aquaHigh = $state.aquaHigh"
+            state.HighLowChange = true
+        }
+        if(value < state.aquaLow || !state.aquaLow) {
+        	log.debug "Updating low temperature"
+            state.aquaLow = value
+            log.debug "state.aquaLow = $state.aquaLow"
+            state.HighLowChange = true
+        }  
+    }
+    if(state.HighLowChange) {
+    	def result2 = createEvent(name: "HighLow", value: "High: ${state.aquaHigh}° Low: ${state.aquaLow}°")
+        log.debug "result: $result"
+        log.debug "result2: $result2"
+        
+        return [result, result2]
+    }
+    else {
+    	log.debug "result: $result"
+    	
+    	result
+    }
 }
 
 // handle commands
@@ -139,4 +175,11 @@ def configure() {
         "delay 1000",
         zigbee.smartShield(text: "temphumid " + temphumidSampleRate).format()
     ]
+}
+
+def refresh() {
+	log.debug "Executing 'refresh'"
+    log.debug "Reseting 'state.aquaHigh' and 'state.aquaLow' to 'null'"
+	state.aquaHigh = null
+    state.aquaLow = null
 }
