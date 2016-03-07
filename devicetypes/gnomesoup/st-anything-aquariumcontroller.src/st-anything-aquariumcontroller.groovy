@@ -32,11 +32,24 @@ metadata {
 		capability "Polling"
         capability "waterSensor"
         capability "Refresh"
-
-		attribute "t_Aquarium", "string"
-        attribute "t_Air", "string"
-        attribute "h_Air", "string"
+        
+        attribute "Air_Temperature", "string"
+        attribute "Air_Humidity", "string"
         attribute "HighLow", "string"
+        
+        attribute "switch1", "string"
+        attribute "switch2", "string"
+        attribute "switch3", "string"
+        attribute "switch4", "string"
+        
+        command "on1"
+        command "on2"
+        command "on3"
+        command "on4"
+        command "off1"
+        command "off2"
+        command "off3"
+        command "off4"
 	}
 
     simulator {
@@ -47,13 +60,14 @@ metadata {
     // Preferences
 	preferences {
     	input "temphumidSampleRate", "number", title: "Temperature/Humidity Sensor Sampling Interval (seconds)", description: "Sampling Interval (seconds)", defaultValue: 30, required: true, displayDuringSetup: true
+    	input "heaterSetPoint", "number", title: "Aquarium Temperature (degrees fahrenheit)", description: "Set the desired temperature in degrees farhenheit", defaultValue: 78, required: false, displayDuringSetup: true
     }
 
 	// Tile Definitions
 	tiles(scale: 2) {
     
         multiAttributeTile(name:"richTemp", type:"generic", width: 6, height: 4) {
-			tileAttribute("device.t_Aquarium", key: "PRIMARY_CONTROL") {
+			tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
                 attributeState("default",label:'${currentValue}°',
 				backgroundColors:[
 					[value: 70, color: "#153591"],
@@ -69,7 +83,7 @@ metadata {
             	attributeState("default", label:'${currentValue}')
             }
 		}
-        valueTile("t_Air", "device.t_Air", width: 2, height: 2) {
+        valueTile("Air_Temperature", "device.Air_Temperature", width: 2, height: 2) {
 			state("temperature", label:'${currentValue}° Air', unit:"dF", 
 				backgroundColors:[
 					[value: 31, color: "#153591"],
@@ -82,12 +96,24 @@ metadata {
 				]
 			)
 		}
-        valueTile("h_Air", "device.h_Air", width: 2, height: 2) {
+        valueTile("Air_Humidity", "device.Air_Humidity", width: 2, height: 2) {
         	state("humidity", label:'${currentValue}% Air', unit:"%")
         }
-        standardTile("switch", "device.switch", width: 2, height:2, canChangeIcon: true) {
-			state "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
-			state "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+        standardTile("switch1", "device.switch1", width: 2, height:2, canChangeIcon: true) {
+			state "off", label: '${name}', action: "on1", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
+			state "on", label: '${name}', action: "off1", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+		}
+        standardTile("switch2", "device.switch2", width: 2, height:2, canChangeIcon: true) {
+			state "off", label: '${name}', action: "on2", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
+			state "on", label: '${name}', action: "off2", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+        }
+        standardTile("switch3", "device.switch3", width: 2, height:2, canChangeIcon: true) {
+			state "off", label: '${name}', action: "on3", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
+			state "on", label: '${name}', action: "off3", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+		}
+        standardTile("switch4", "device.switch4", width: 2, height:2, canChangeIcon: true) {
+			state "off", label: '${name}', action: "on4", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
+			state "on", label: '${name}', action: "off4", icon: "st.switches.switch.on", backgroundColor: "#79b821"
 		}
         standardTile("float", "device.float", width:2, height:2, canChangeIcon:true) {
         	state "wet", icon:"st.alarm.water.dry", backgroundColor:"#53a7c0"
@@ -101,7 +127,7 @@ metadata {
         }
         
         main(["richTemp"])
-        details(["richTemp","t_Air","float","switch","h_Air","configure","refresh"])
+        details(["richTemp","Air_Temperature","float","Air_Humidity","switch1","switch2","switch3","switch4","configure","refresh"])
 	}
 }
 
@@ -119,7 +145,7 @@ def parse(String description) {
 	
     def result = createEvent(name: name, value: value)
 	
-    if(name == "t_Aquarium") {
+    if(name == "temperature") {
     	log.debug "state.aquaHigh = $state.aquaHigh"
         log.debug "state.aquaLow = $state.aquaLow"
     	state.HighLowChange = false
@@ -152,14 +178,44 @@ def parse(String description) {
 
 // handle commands
 
-def on() {
-	log.debug "Executing 'switch on'"
-	zigbee.smartShield(text: "switch on").format()
+def on1() {
+	log.debug "Executing 'switch1 on'"
+	zigbee.smartShield(text: "switch1 on").format()
 }
 
-def off() {
-	log.debug "Executing 'switch off'"
-	zigbee.smartShield(text: "switch off").format()
+def off1() {
+	log.debug "Executing 'switch1 off'"
+	zigbee.smartShield(text: "switch1 off").format()
+}
+
+def on2() {
+	log.debug "Executing 'switch2 on'"
+	zigbee.smartShield(text: "switch2 on").format()
+}
+
+def off2() {
+	log.debug "Executing 'switch2 off'"
+	zigbee.smartShield(text: "switch2 off").format()
+}
+
+def on3() {
+	log.debug "Executing 'switch3 on'"
+	zigbee.smartShield(text: "switch3 on").format()
+}
+
+def off3() {
+	log.debug "Executing 'switch3 off'"
+	zigbee.smartShield(text: "switch3 off").format()
+}
+
+def on4() {
+	log.debug "Executing 'switch4 on'"
+	zigbee.smartShield(text: "switch4 on").format()
+}
+
+def off4() {
+	log.debug "Executing 'switch4 off'"
+	zigbee.smartShield(text: "switch4 off").format()
 }
 
 def poll() {
@@ -170,10 +226,15 @@ def poll() {
 
 def configure() {
 	log.debug "Executing 'configure'"
-	log.debug "temphumid " + temphumidSampleRate
+	log.debug "th_Air " + temphumidSampleRate
 	[
+        zigbee.smartShield(text: "temperature" + temphumidSampleRate).format(),
         "delay 1000",
-        zigbee.smartShield(text: "temphumid " + temphumidSampleRate).format()
+        zigbee.smartShield(text: "th_Air" + temphumidSampleRate).format(),
+        "delay 1000",
+        zigbee.smartShield(text: "float" + temphumidSampleRate).format(),
+        "delay 1000",
+        zigbee.smartShield(text: "heatSetTemp" + heaterSetPoint).format()
     ]
 }
 
