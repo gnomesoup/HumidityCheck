@@ -16,62 +16,88 @@ metadata{
     definition (name: "Virtual Thermostat", namespace: "gnomesoup", author: "Michael J Pfammatter") {
         capability "Actuator"
         capability "Temperature Measurement"
-        capabilty "Thermostat"
-        capabilty "configuration"
-        capability "Polling"
+        capability "Thermostat"
+        capability "Refresh"
+        capability "Configuration"
         capability "Sensor"
 
-        attribute "thermostatFanState", "string"
+        // attribute "thermostatFanState", "string"
+        command "tempUp"
+        command "tempDown"
+        // command "setVirtualTemperature", ["number"]
+        command "setOperatingState", ["string"]
+        // command "setMode", ["string"]
     }
-
-    // simulator metadata
     simulator {
-		    status "off"			: "command: 4003, payload: 00"
-		    status "heat"			: "command: 4003, payload: 01"
-		    status "cool"			: "command: 4003, payload: 02"
-		    status "auto"			: "command: 4003, payload: 03"
-		    status "emergencyHeat"	: "command: 4003, payload: 04"
-
-
-		    status "heat 60"        : "command: 4303, payload: 01 09 3C"
-		    status "heat 68"        : "command: 4303, payload: 01 09 44"
-		    status "heat 72"        : "command: 4303, payload: 01 09 48"
-
-		    status "cool 72"        : "command: 4303, payload: 02 09 48"
-		    status "cool 76"        : "command: 4303, payload: 02 09 4C"
-		    status "cool 80"        : "command: 4303, payload: 02 09 50"
-
-		    status "temp 58"        : "command: 3105, payload: 01 2A 02 44"
-		    status "temp 62"        : "command: 3105, payload: 01 2A 02 6C"
-		    status "temp 70"        : "command: 3105, payload: 01 2A 02 BC"
-		    status "temp 74"        : "command: 3105, payload: 01 2A 02 E4"
-		    status "temp 78"        : "command: 3105, payload: 01 2A 03 0C"
-		    status "temp 82"        : "command: 3105, payload: 01 2A 03 34"
-
-		    status "idle"			: "command: 4203, payload: 00"
-		    status "heating"		: "command: 4203, payload: 01"
-		    status "cooling"		: "command: 4203, payload: 02"
-		    status "fan only"		: "command: 4203, payload: 03"
-		    status "pending heat"	: "command: 4203, payload: 04"
-		    status "pending cool"	: "command: 4203, payload: 05"
-		    status "vent economizer": "command: 4203, payload: 06"
-
-		    reply "2502": "command: 2503, payload: FF"
+        // TODO: define status and reply messages here
     }
 
-	  tiles {
-		    valueTile("temperature", "device.temperature", width: 2, height: 2) {
-			      state("temperature", label:'${currentValue}°',
-				          backgroundColors:[
-					          [value: 31, color: "#153591"],
-					          [value: 44, color: "#1e9cbb"],
-					          [value: 59, color: "#90d2a7"],
-					          [value: 74, color: "#44b621"],
-					          [value: 84, color: "#f1d801"],
-					          [value: 95, color: "#d04e00"],
-					          [value: 96, color: "#bc2323"]
-				        ]
-			      )
-		    }
+	  tiles(scale: 2) {
+        multiAttributeTile(name:"thermostatFull", type:"thermostat", width:6, height:4) {
+            tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
+                attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true)
+            }
+            tileAttribute("device.temperature", key: "VALUE_CONTROL") {
+                attributeState("VALUE_UP", action: "tempUp")
+                attributeState("VALUE_DOWN", action: "tempDown")
+            }
+            tileAttribute("device.thermostatOperatingState", key: "OPERATING_STATE") {
+                attributeState("idle", backgroundColor:"#00A0DC")
+                attributeState("heating", backgroundColor:"#e86d13")
+                attributeState("cooling", backgroundColor:"#00A0DC")
+            }
+            // tileAttribute("device.thermostatMode", key: "THERMOSTAT_MODE") {
+            //     attributeState("off", label:'${name}')
+            //     attributeState("heat", label:'${name}')
+            //     attributeState("cool", label:'${name}')
+            //     attributeState("auto", label:'${name}')
+            // }
+            tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
+                attributeState("heatingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
+            }
+            tileAttribute("device.coolingSetpoint", key: "COOLING_SETPOINT") {
+                attributeState("coolingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
+            }
+        }
     }
+}
+
+def installed() {
+    log.trace "Executing 'installed'"
+    initialize()
+    done()
+}
+
+def configure() {
+    log.trace "Executing 'configure'"
+    initialize()
+    done()
+}
+
+private initialize() {
+    log.trace "Executin 'initialize'"
+    sendEvent(name: "temperature", value: 75.0, unit: "dF")
+    sendEvent(name: "heatingSetpoint", value: 70.0, unit: "dF")
+    sendEvent(name: "coolingSetpoint", value: 80.0, unit: "dF")
+    sendEvent(name: "thermostatOperatingState", value: "idle")
+    // sendEvent(name: "thermostatMode", value: "heat")
+}
+
+private void done() {
+    log.trace "---- DONE ----"
+}
+
+def levelUp() {
+    def hsp = device.currentValue("heatingSetpoint") + 1
+    log.debug "Setting heatingSetpoint to: $hsp"
+    sendEvent(name:"heatingSetpoint", value: temp, unit: "dF")
+}
+
+def levelDown() {
+    def hsp = device.currentValue("heatingSetpoint") - 1
+    log.debug "Setting heatingSetpoint to: $hsp"
+    sendEvent(name:"heatingSetpoint", value: temp, unit: "dF")
+}
+
+def setOperatingState() {
 }
