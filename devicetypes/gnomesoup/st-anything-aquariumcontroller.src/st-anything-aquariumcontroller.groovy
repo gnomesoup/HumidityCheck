@@ -123,11 +123,15 @@ metadata {
 			state "configure", label:'', action:"configuration.configure", icon:"st.secondary.configure"
 		}
         standardTile("refresh", "device.refresh", width:1, height:1, decoration: "flat") {
-        	state "refresh", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+        	state "refresh", label:'Reset H/L°', action:"refresh.refresh", icon:"st.secondary.refresh-icon"
+        }
+        
+        standardTile("highLow", "device.HighLow", width:4, height:1) {
+        	state "default", label:'${currentValue}'
         }
         
         main(["richTemp"])
-        details(["richTemp","Air_Temperature","float","Air_Humidity","switch1","switch2","switch3","switch4","configure","refresh"])
+        details(["richTemp","Air_Temperature","float","Air_Humidity","switch1","switch2","switch3","switch4","highLow","configure","refresh"])
 	}
 }
 

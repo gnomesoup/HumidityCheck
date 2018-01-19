@@ -17,9 +17,9 @@
  */
 metadata {
 	definition (name: "Aeon Smart Switch Original", namespace: "gnomesoup", author: "Michael J. Pfammatter") {
-		capability "Energy Meter"
-		capability "Actuator"
 		capability "Switch"
+        capability "Energy Meter"
+		capability "Actuator"
 		capability "Power Meter"
 		capability "Polling"
 		capability "Refresh"
@@ -60,25 +60,26 @@ metadata {
 				attributeState "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
         	}
         }
-        
+        /*
         standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
 			state "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
 			state "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
 		}
-		valueTile("power", "device.power") {
+        */
+		valueTile("power", "device.power", width:2, height:2) {
 			state "default", label:'${currentValue} W'
 		}
-		valueTile("energy", "device.energy") {
+		valueTile("energy", "device.energy", width:2, height:2) {
 			state "default", label:'${currentValue} kWh'
 		}
 		standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat") {
-			state "default", label:'reset kWh', action:"reset"
+			state "default", label:'reset kWh', action:"reset", icon:"st.secondary.refresh-icon"
 		}
 		standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat") {
 			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
 		}
 
-		main(["switch"])
+		main(["energy"])
 		details(["richSwitch","power","energy","refresh","reset"])
 	}
 }
