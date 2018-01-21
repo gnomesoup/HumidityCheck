@@ -1,11 +1,24 @@
 /*
  *
+ *  Virtual Thermostat Control
+ *
+ *  Copyright 2015 Michael Pfammatter
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License. You may obtain a copy of the License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
+ *
  *
 */
 
 definition(
     name: "Virtual Thermostat Controller"
-    namespace: "gnomesoup"
+    namespace: "GnomeSoup"
     author: "Michael J. Pfammatter"
     description: "A virtual thermostat to control a remote thermostat using an independent temperature sensor"
     category: "Climate Control"
