@@ -39,7 +39,7 @@ preferences {
 def installed()
 {
     log.debug "running installed"
-    stat.deviceID = Math.abs(new Random().netxInt() % 9999) + 1
+    stat.deviceID = Math.abs(new Random().nextInt() % 9999) + 1
     stat.lastTemp = null
     stat.contact = true
 }
