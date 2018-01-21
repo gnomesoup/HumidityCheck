@@ -17,11 +17,11 @@
 */
 
 definition(
-    name: "Virtual Thermostat Controller"
-    namespace: "GnomeSoup"
-    author: "Michael J. Pfammatter"
-    description: "A virtual thermostat to control a remote thermostat using an independent temperature sensor"
-    category: "Climate Control"
+    name: "Virtual Thermostat Controller",
+    namespace: "GnomeSoup",
+    author: "Michael J. Pfammatter",
+    description: "A virtual thermostat to control a remote thermostat using an independent temperature sensor",
+    category: "Climate Control",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
