@@ -42,6 +42,7 @@ def installed()
     state.deviceID = Math.abs(new Random().nextInt() % 9999) + 1
     state.lastTemp = null
     state.contact = true
+    createDevice()
 }
 
 def createDevice() {
