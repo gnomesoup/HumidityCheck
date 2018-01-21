@@ -51,6 +51,8 @@ def createDevice() {
     try {
         thermostat = addChildDevice("gnomesoup", "Virtual Thermostat", "gnome" + state.deviceID, null,
                                     [label: label, name: label, completedSetup: true])
+    } catch(e) {
+        log.error("Caught exception", e)
     }
 }
 
