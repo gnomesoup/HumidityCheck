@@ -39,7 +39,7 @@ preferences {
 def installed()
 {
     log.debug "running installed"
-    stat.deviceID = Math.abs(new Random().netxInt() % 9999) + 1
+    stat.deviceID = Math.abs(new Random().nextInt() % 9999) + 1
     stat.lastTemp = null
     stat.contact = true
 }
@@ -47,7 +47,7 @@ def installed()
 def createDevice() {
     def thermostat
     def label = app.getLabel()
-    log.debug "create device with id: pmvt$stat.deviceID, named: $label, "
+    log.debug "create device with id: gnome$stat.deviceID, named: $label, "
     try {
         thermostat = addChildDevice("gnomesoup", "Virtual Thermostat", "gnome" + state.deviceID, null,
                                     [label: label, name: label, completedSetup: true])
