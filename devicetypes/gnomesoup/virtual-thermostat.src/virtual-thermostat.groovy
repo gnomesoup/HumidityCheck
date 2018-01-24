@@ -37,7 +37,7 @@ metadata{
             tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
                 attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true)
             }
-            tileAttribute("device.temperature", key: "VALUE_CONTROL") {
+            tileAttribute("device.thermostatSetpoint", key: "VALUE_CONTROL") {
                 attributeState("VALUE_UP", action: "tempUp")
                 attributeState("VALUE_DOWN", action: "tempDown")
             }
@@ -59,7 +59,7 @@ metadata{
                 attributeState("coolingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
             }
         }
-        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
+        valueTile("heatingSetpoint", "device.heatingSetpoint", decoration: "flat", width: 2, height: 2) {
             state "heat", label:'${currentValue}', unit:"df"
         }
     }
@@ -78,7 +78,7 @@ def configure() {
 }
 
 private initialize() {
-    log.trace "Executin 'initialize'"
+    log.trace "Executing 'initialize'"
     sendEvent(name: "temperature", value: 75.0, unit: "dF")
     sendEvent(name: "heatingSetpoint", value: 70.0, unit: "dF")
     sendEvent(name: "coolingSetpoint", value: 80.0, unit: "dF")
