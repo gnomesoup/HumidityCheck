@@ -37,7 +37,7 @@ metadata{
             tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
                 attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true)
             }
-            tileAttribute("device.thermostatSetpoint", key: "VALUE_CONTROL") {
+            tileAttribute("device.heatingSetpoint", key: "VALUE_CONTROL") {
                 attributeState("VALUE_UP", action: "tempUp")
                 attributeState("VALUE_DOWN", action: "tempDown")
             }
@@ -83,7 +83,7 @@ private initialize() {
     sendEvent(name: "heatingSetpoint", value: 70.0, unit: "dF")
     sendEvent(name: "coolingSetpoint", value: 80.0, unit: "dF")
     sendEvent(name: "thermostatOperatingState", value: "idle")
-    // sendEvent(name: "thermostatMode", value: "heat")
+    sendEvent(name: "thermostatMode", value: "heat")
 }
 
 private void done() {
