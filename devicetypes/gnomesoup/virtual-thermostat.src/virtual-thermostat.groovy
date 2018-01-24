@@ -46,12 +46,12 @@ metadata{
                 attributeState("heating", backgroundColor:"#e86d13")
                 attributeState("cooling", backgroundColor:"#00A0DC")
             }
-            // tileAttribute("device.thermostatMode", key: "THERMOSTAT_MODE") {
-            //     attributeState("off", label:'${name}')
-            //     attributeState("heat", label:'${name}')
-            //     attributeState("cool", label:'${name}')
-            //     attributeState("auto", label:'${name}')
-            // }
+            tileAttribute("device.thermostatMode", key: "THERMOSTAT_MODE") {
+                attributeState("off", label:'${name}')
+                attributeState("heat", label:'${name}')
+                attributeState("cool", label:'${name}')
+                attributeState("auto", label:'${name}')
+            }
             tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
                 attributeState("heatingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
             }
@@ -93,13 +93,14 @@ def heatingSetpointUp() {
 def tempUp() {
     def hsp = device.currentValue("heatingSetpoint") + 1
     log.debug "Setting heatingSetpoint to: $hsp"
-    // sendEvent(name:"thermostatSetpoint", value: temp, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: temp, unit: "dF")
     sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
 }
 
 def tempDown() {
     def hsp = device.currentValue("heatingSetpoint") - 1
     log.debug "Setting heatingSetpoint to: $hsp"
+    sendEvent(name:"thermostatSetpoint", value: temp, unit: "dF")
     sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
 }
 
