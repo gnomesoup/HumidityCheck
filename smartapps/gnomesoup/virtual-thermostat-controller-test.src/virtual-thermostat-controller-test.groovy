@@ -35,7 +35,7 @@ preferences {
 def installed()
 {
     log.debug "running installed"
-    state.deviceID = "f1233b55-c8b5-451a-8241-7a7228dd994a"
+    state.deviceID = "GnomeSoup-VT-" + Math.abs(new Random().nextInt()) % 9999 + 1
     state.lastTemp = null
     state.contact = true
     createDevice()
@@ -46,7 +46,7 @@ def createDevice() {
     def label = app.getLabel()
     log.debug "create device with id: $state.deviceID, named: $label, "
     try {
-        thermostat = addChildDevice("gnomesoup", "Virtual Thermostat", state.deviceID, null,
+        thermostat = addChildDevice("GnomeSoup", "Virtual Thermostat", state.deviceID, null,
                                     [label: label, name: label, completedSetup: true])
     } catch(e) {
         log.error("Caught exception", e)
@@ -66,6 +66,6 @@ def updated() {
     }
     state.lastTemp = null
     subscribe(sensor, "temperature", temperatureHandler)
-    // subscribe(thermostat, "thermostatSetpoint", thermostatTemperatureHandler)
-    // subscribe(thermostat, "thermostatMode", thermostatModeHandler)
+    subscribe(thermostat, "thermostatSetpoint", thermostatTemperatureHandler)
+    subscribe(thermostat, "thermostatMode", thermostatModeHandler)
 }
