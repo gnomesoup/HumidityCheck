@@ -35,7 +35,7 @@ preferences {
 def installed()
 {
     log.debug "running installed"
-    state.deviceID = Math.abs(new Random().nextInt() % 9999) + 1
+    state.deviceID = "f1233b55-c8b5-451a-8241-7a7228dd994a"
     state.lastTemp = null
     state.contact = true
     createDevice()
@@ -44,9 +44,9 @@ def installed()
 def createDevice() {
     def thermostat
     def label = app.getLabel()
-    log.debug "create device with id: pmvt$state.deviceID, named: $label, "
+    log.debug "create device with id: $state.deviceID, named: $label, "
     try {
-        thermostat = addChildDevice("gnomesoup", "Virtual Thermostat", "gnome" + state.deviceID, null,
+        thermostat = addChildDevice("gnomesoup", "Virtual Thermostat", state.deviceID, null,
                                     [label: label, name: label, completedSetup: true])
     } catch(e) {
         log.error("Caught exception", e)
@@ -54,7 +54,7 @@ def createDevice() {
 }
 
 def getThermostat() {
-    return getChildDevice("gnome" + state.deviceID)
+    return getChildDevice(state.deviceID)
 }
 
 def updated() {

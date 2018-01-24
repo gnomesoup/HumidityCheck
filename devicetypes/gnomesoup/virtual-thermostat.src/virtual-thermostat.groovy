@@ -90,14 +90,14 @@ private void done() {
 def heatingSetpointUp() {
     def hsp = device.current
 }
-def levelUp() {
+def tempUp() {
     def hsp = device.currentValue("heatingSetpoint") + 1
     log.debug "Setting heatingSetpoint to: $hsp"
     // sendEvent(name:"thermostatSetpoint", value: temp, unit: "dF")
     sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
 }
 
-def levelDown() {
+def tempDown() {
     def hsp = device.currentValue("heatingSetpoint") - 1
     log.debug "Setting heatingSetpoint to: $hsp"
     sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
