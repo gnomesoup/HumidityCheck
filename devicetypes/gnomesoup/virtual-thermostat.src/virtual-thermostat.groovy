@@ -59,8 +59,8 @@ metadata{
                 attributeState("coolingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
             }
         }
-        valueTile("device.heatingSetpoint", key:"HEATING_SETPOINT") {
-            state("heatingSetpoint", label:'${currentValue}', unit:"df", defaultState: true)
+        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
+            state "heat", label:'${currentValue}', unit:"df"
         }
     }
 }
