@@ -98,11 +98,15 @@ def tempUp() {
     // increment the setpoint when buttons are pressed on the main tile
     def tsp = device.currentValue("thermostatSetpoint") + 1
     log.debug "Setting thermostatSetpoint to: $tsp"
-    if(device.thermostatMode == "heat")
-    def hsp = device.currentValue("heatingSetpoint") + 1
-    log.debug "Setting heatingSetpoint to: $hsp"
-    sendEvent(name:"thermostatSetpoint", value: hsp, unit: "dF")
-    sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+    if(device.thermostatMode == "heat") {
+        log.debug "Setting heatingSetpoint to: $tsp"
+        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+    }
+    if(device.thermostatMode == "cool") {
+        log.debug "Setting coolingSetpoint to: $tsp"
+        sendEvent(name:"coolingSetpoint", value: tsp, unit: "dF")
+    }
 }
 
 def tempDown() {
