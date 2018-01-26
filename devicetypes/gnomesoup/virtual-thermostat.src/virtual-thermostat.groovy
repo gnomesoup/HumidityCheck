@@ -121,7 +121,7 @@ def setTemperature(degrees) {
     setTemperature(degrees.toDouble())
 }
 
-def setTemperature(degrees) {
+def setTemperature(Double degrees) {
     // set temperature from other source like a multi senor
     log.trace "setTemperature($degrees)"
     sendEvent(name:"temperature", value: degrees, unit: "dF")
