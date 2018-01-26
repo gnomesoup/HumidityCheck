@@ -20,6 +20,7 @@ metadata{
         capability "Refresh"
         capability "Configuration"
         capability "Sensor"
+        capability "Thermostat Mode"
 
         // attribute "thermostatFanState", "string"
         command "tempUp"
