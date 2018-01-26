@@ -65,12 +65,22 @@ def updated() {
         thermostat = createDevice()
     }
     state.lastTemp = null
-    subscribe(sensor, "temperature", temperatureHandler)
+    initialize()
+}
+
+def initialize() {
+    subscribe(sensor, "temperatureMeasurement", temperatureHandler)
     subscribe(thermostat, "thermostatSetpoint", thermostatTemperatureHandler)
     subscribe(thermostat, "thermostatMode", thermostatModeHandler)
+    subscribe(thermostat, "refresh", refreshHandler)
 }
 
 def temperatureHandler(evt) {
     log.debug "temperatureHandler called: $evt"
     thermostat.setTemperature(evt)
+}
+
+def refreshHandler() {
+    log.debug "refreshHandler called"
+    thermostat.setTemperature(sensor.temperatureMeasurement)
 }
