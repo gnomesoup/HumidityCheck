@@ -62,6 +62,10 @@ metadata{
         valueTile("heatingSetpoint", "device.heatingSetpoint", decoration: "flat", width: 2, height: 2) {
             state "heat", label:'${currentValue}', unit:"df"
         }
+        valueTile("coolingSetpoint", "device.coolingSetpoint", decoration: "flat", width: 2, height: 2) {
+            state "cool", label:'${currentValue}', unit:"df"
+        }
+
     }
 }
 
@@ -90,10 +94,11 @@ private void done() {
     log.trace "---- DONE ----"
 }
 
-def heatingSetpointUp() {
-    def hsp = device.current
-}
 def tempUp() {
+    // increment the setpoint when buttons are pressed on the main tile
+    def tsp = device.currentValue("thermostatSetpoint") + 1
+    log.debug "Setting thermostatSetpoint to: $tsp"
+    if(device.thermostatMode == "heat")
     def hsp = device.currentValue("heatingSetpoint") + 1
     log.debug "Setting heatingSetpoint to: $hsp"
     sendEvent(name:"thermostatSetpoint", value: hsp, unit: "dF")
@@ -101,11 +106,47 @@ def tempUp() {
 }
 
 def tempDown() {
+    // increment the setpoint when buttons are pressed on the main tile
     def hsp = device.currentValue("heatingSetpoint") - 1
     log.debug "Setting heatingSetpoint to: $hsp"
     sendEvent(name:"thermostatSetpoint", value: hsp, unit: "dF")
     sendEvent(name:"heatingSetpoint", value: hsp, unit: "dF")
 }
 
-def setOperatingState() {
+// def setOperatingState() {
+// }
+
+def setTemperature(degrees) {
+    // convert temperature to double
+    setTemperature(degrees.toDouble())
+}
+
+def setTemperature(degrees) {
+    // set temperature from other source like a multi senor
+    log.trace "setTemperature($degrees)"
+    sendEvent(name:"temperature", value: degrees, unit: "dF")
+}
+
+def setHeatingSetpoint(degress) {
+    // convert temperature to double
+    setHeatingSetpoint(degrees.toDouble())
+}
+
+def setHeatingSetpoint(Double degrees) {
+    // Allow things like google home to adjust setpoint
+    log.trace "setHeatingSetpoint($degrees)"
+    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "dF")
+    sendEvent(name:"heatingSetpoint", value: degrees, unit: "dF")
+}
+
+def setCoolingSetpoint(degress) {
+    // convert temperature to double
+    setCoolingSetpoint(degrees.toDouble())
+}
+
+def setCoolingSetpoint(Double degrees) {
+    // Allow things like google home to adjust setpoint
+    log.trace "setCoolingSetpoint($degrees)"
+    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "dF")
+    sendEvent(name:"coolingSetpoint", value: degrees, unit: "dF")
 }

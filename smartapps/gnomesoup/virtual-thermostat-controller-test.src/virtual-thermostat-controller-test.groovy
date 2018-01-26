@@ -25,7 +25,7 @@ definition(
 
 preferences {
     section("Choose a thermostat...") {
-        input "thermostat", "capability.thermostat", title: "Thermostat"
+        input "thermostatActual", "capability.thermostat", title: "Thermostat"
     }
     section("Choose a temperature sensor..."){
         input "sensor", "capability.temperatureMeasurement", title: "Sensor"
@@ -68,4 +68,9 @@ def updated() {
     subscribe(sensor, "temperature", temperatureHandler)
     subscribe(thermostat, "thermostatSetpoint", thermostatTemperatureHandler)
     subscribe(thermostat, "thermostatMode", thermostatModeHandler)
+}
+
+def temperatureHandler(evt) {
+    log.debug "temperatureHandler called: $evt"
+    thermostat.setTemperature(evt)
 }
