@@ -20,14 +20,9 @@ metadata{
         capability "Refresh"
         capability "Configuration"
         capability "Sensor"
-        capability "Thermostat Mode"
-
-        // attribute "thermostatFanState", "string"
         command "tempUp"
         command "tempDown"
-        // command "setVirtualTemperature", ["number"]
         command "setOperatingState", ["string"]
-        // command "setMode", ["string"]
     }
     simulator {
         // TODO: define status and reply messages here
@@ -98,7 +93,7 @@ private void done() {
 def tempUp() {
     // increment the setpoint when buttons are pressed on the main tile
     def tsp = device.currentValue("thermostatSetpoint") + 1
-    def tMode = device.currentValue("thermostatMode")
+    def tMode = device.currentState("thermostatMode")
     log.debug "Setting thermostatSetpoint to: $tsp"
     log.debug "thermostatMode = $tMode"
     sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
@@ -114,10 +109,19 @@ def tempUp() {
 
 def tempDown() {
     // increment the setpoint when buttons are pressed on the main tile
-    def tsp = device.currentValue("heatingSetpoint") - 1
-    log.debug "Setting heatingSetpoint to: $tsp"
+    def tsp = device.currentValue("thermostatSetpoint") - 1
+    def tMode = device.currentState("thermostatMode")
+    log.debug "Setting thermostatSetpoint to: $tsp"
+    log.debug "thermostatMode = $tMode"
     sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
-    sendEvent(name:"heatingSetpoint", value: tsp, unit: "dF")
+    if(tMode == "heat") {
+        log.debug "Setting heatingSetpoint to: $tsp"
+        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+    }
+    if(tMode == "cool") {
+        log.debug "Setting coolingSetpoint to: $tsp"
+        sendEvent(name:"coolingSetpoint", value: tsp, unit: "dF")
+    }
 }
 
 // def setOperatingState() {
