@@ -16,7 +16,7 @@
 definition(
     name: "Garden Waterer",
     namespace: "GnomeSoup",
-    author: "Michael J Pfammatter"
+    author: "Michael J Pfammatter",
     description: "Turn on a hose valve when the soil moisture content drops. v0.0.1",
     category: "",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Pets/App-Does___HaveWater.png",
