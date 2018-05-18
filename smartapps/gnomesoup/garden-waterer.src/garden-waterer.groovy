@@ -94,9 +94,10 @@ def moistureHandler(moistureEvt) {
 }
 
 def moistureSpotCheck() {
-    def moistureValue = soil1.humidityState
+    def moistureValue = soil1.currentValue("humidity").toInteger()
+    state.switch1Name = switch1.getDevice()
     log.debug("$state.name: moistureSpotCheck called")
-    log.debug("$state.name: ${soil1.displayname} moisture is $moistureValue")
+    log.debug("$state.name: ${soil1.getDevice()} moisture is $moistureValue")
     if(moistureValue <= humMin) {
         switch1.on()
         state.switchValue = "on"
