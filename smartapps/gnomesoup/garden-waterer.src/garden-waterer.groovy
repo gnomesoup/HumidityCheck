@@ -70,17 +70,16 @@ def initialize() {
     subscribe(soil1, "humidity", moistureHandler)
     subscribe(switch1, "switch", switchHandler)
     state.name = "Garden Waterer"
-    state.soil1Name = soil1.label ? soil1.label : soil1.name
-    state.switch1Name = switch1.label ? switch1.label : switch1.name
 }
 
 def moistureHandler(moistureEvt) {
     def moistureValue = moistureEvt.value.toInteger()
+    state.soil1Name = moistureEvt.displayname
 
     log.debug("$state.name: moistureHandler called")
     log.debug("$state.name: ${state.soil1Name} is ${state.soil1}")
     state.moistureValue = moistureValue
-    if(moistureValue <= soilMin && state.switchValue == "off") {
+    if(moistureValue <= soilMin) {
         switch1.on()
         state.switchValue = "on"
         log.debug("$state.name: Turning ${state.switch1Name} on")
@@ -97,6 +96,7 @@ def moistureHandler(moistureEvt) {
 
 def switchHandler(switchEvt) {
     def switchValue = switchEvt.value
+    state.switch1Name = switchEvt.displayname
 
     log.debug("$state.name: switchHandler called")
     log.debug("$state.name: ${state.switch1Name} is $switchValue")
