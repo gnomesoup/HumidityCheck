@@ -74,7 +74,7 @@ def initialize() {
 
 def moistureHandler(moistureEvt) {
     def moistureValue = moistureEvt.value.toInteger()
-    state.soil1Name = moistureEvt.displayname
+    state.soil1Name = moistureEvt.getDevice()
     log.debug("$state.name: moistureHandler called")
     log.debug("$state.name: ${state.soil1Name} moisture is $moistureValue")
     state.moistureValue = moistureValue
@@ -98,7 +98,7 @@ def moistureSpotCheck() {
     state.switch1Name = switch1.getDevice()
     log.debug("$state.name: moistureSpotCheck called")
     log.debug("$state.name: ${soil1.getDevice()} moisture is $moistureValue")
-    if(moistureValue <= humMin) {
+    if(moistureValue <= soilMin) {
         switch1.on()
         state.switchValue = "on"
         log.debug("")
@@ -115,15 +115,13 @@ def moistureSpotCheck() {
 
 def switchHandler(switchEvt) {
     def switchValue = switchEvt.value
-    state.switch1Name = switchEvt.displayname
-
     log.debug("$state.name: switchHandler called")
-    log.debug("$state.name: ${state.switch1Name} is $switchValue")
+    log.debug("$state.name: ${switchEvt.displayname} is $switchValue")
     state.switchValue = switchValue
 }
 
 private send(msg) {
-	log.debug("$state.name: Send message called")
+	  log.debug("$state.name: Send message called")
     log.debug("sendPushMessage: $sendPushMessage")
     log.debug("mode: ${location.mode}")
     log.debug("notModes = $notModes")
