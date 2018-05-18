@@ -54,7 +54,6 @@ preferences {
     }
 }
 
-
 def installed() {
     log.debug "Installed with settings: ${settings}"
     initialize()
@@ -69,20 +68,39 @@ def updated() {
 def initialize() {
     subscribe(soil1, "humidity", moistureHandler)
     subscribe(switch1, "switch", switchHandler)
+    runEvery5Minutes(moistureSpotCheck)
     state.name = "Garden Waterer"
 }
 
 def moistureHandler(moistureEvt) {
     def moistureValue = moistureEvt.value.toInteger()
     state.soil1Name = moistureEvt.displayname
-
     log.debug("$state.name: moistureHandler called")
-    log.debug("$state.name: ${state.soil1Name} is ${state.soil1}")
+    log.debug("$state.name: ${state.soil1Name} moisture is $moistureValue")
     state.moistureValue = moistureValue
     if(moistureValue <= soilMin) {
         switch1.on()
         state.switchValue = "on"
         log.debug("$state.name: Turning ${state.switch1Name} on")
+    }
+    else if(moistureValue >= soilMax && state.switchValue == "on") {
+        switch1.off()
+        state.switchValue = "off"
+        log.debug("$state.name: Turning ${state.switch1Name} off")
+    }
+    else {
+        log.debug("$state.name: No Action, ${state.switch1Name} already $state.switchValue")
+    }
+}
+
+def moistureSpotCheck() {
+    def moistureValue = soil1.humidityState
+    log.debug("$state.name: moistureSpotCheck called")
+    log.debug("$state.name: ${soil1.displayname} moisture is $moistureValue")
+    if(moistureValue <= humMin) {
+        switch1.on()
+        state.switchValue = "on"
+        log.debug("")
     }
     else if(moistureValue >= soilMax && state.switchValue == "on") {
         switch1.off()
