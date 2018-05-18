@@ -36,7 +36,7 @@ preferences {
         input(name:"switch1", type:"capability.switch")
     }
     section("Turn on the hose when the soil moisture drops to:") {
-        input(name:"soilMax", type:"number",
+        input(name:"soilMin", type:"number",
               title: "Minium soil moisture...")
     }
     section("Turn off the hose when the soil moisture reaches:") {
@@ -50,7 +50,7 @@ preferences {
               title:"Send a text message?", required: false)
     }
     section("Do not notify me in the following modes:") {
-        input(name"notModes", type:"mode",
+        input(name:"notModes", type:"mode",
               title:"Choose modes...", multiple:true, required:false)
     }
 }
