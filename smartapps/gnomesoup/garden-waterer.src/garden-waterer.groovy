@@ -67,7 +67,7 @@ def updated() {
     initialize()
 }
 
-def initialized() {
+def initialize() {
     subscribe(soil1, "humidity", moistureHandler)
     subscribe(switch1, "switch", switchHandler)
     state.name = "Garden Waterer"
