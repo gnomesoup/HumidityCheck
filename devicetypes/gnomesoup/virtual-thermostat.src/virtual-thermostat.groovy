@@ -31,7 +31,7 @@ metadata{
 	  tiles(scale: 2) {
         multiAttributeTile(name:"thermostatFull", type:"thermostat", width:6, height:4) {
             tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
-                attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true)
+                attributeState("temp", label:'${currentValue}º', unit:"F", defaultState: true)
             }
             tileAttribute("device.thermostatSetpoint", key: "VALUE_CONTROL") {
                 attributeState("VALUE_UP", action: "tempUp")
@@ -49,10 +49,10 @@ metadata{
                 attributeState("auto", label:'${name}')
             }
             tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
-                attributeState("heatingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
+                attributeState("heatingSetpoint", label:'${currentValue}', unit:"F", defaultState: true)
             }
             tileAttribute("device.coolingSetpoint", key: "COOLING_SETPOINT") {
-                attributeState("coolingSetpoint", label:'${currentValue}', unit:"dF", defaultState: true)
+                attributeState("coolingSetpoint", label:'${currentValue}', unit:"F", defaultState: true)
             }
         }
         valueTile("heatingSetpoint", "device.heatingSetpoint", decoration: "flat", width: 2, height: 2) {
@@ -79,9 +79,9 @@ def configure() {
 
 private initialize() {
     log.trace "Executing 'initialize'"
-    sendEvent(name: "temperature", value: 75.0, unit: "dF")
-    sendEvent(name: "heatingSetpoint", value: 70.0, unit: "dF")
-    sendEvent(name: "coolingSetpoint", value: 80.0, unit: "dF")
+    sendEvent(name: "temperature", value: 75.0, unit: "F")
+    sendEvent(name: "heatingSetpoint", value: 70.0, unit: "F")
+    sendEvent(name: "coolingSetpoint", value: 80.0, unit: "F")
     sendEvent(name: "thermostatOperatingState", value: "idle")
     sendEvent(name: "thermostatMode", value: "heat")
 }
@@ -93,34 +93,34 @@ private void done() {
 def tempUp() {
     // increment the setpoint when buttons are pressed on the main tile
     def tsp = device.currentValue("thermostatSetpoint") + 1
-    def tMode = device.currentState("thermostatMode")
+    def tMode = device.currentValue("thermostatMode")
     log.debug "Setting thermostatSetpoint to: $tsp"
     log.debug "thermostatMode = $tMode"
-    sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: tsp, unit: "F")
     if(tMode == "heat") {
         log.debug "Setting heatingSetpoint to: $tsp"
-        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "F")
     }
     if(tMode == "cool") {
         log.debug "Setting coolingSetpoint to: $tsp"
-        sendEvent(name:"coolingSetpoint", value: tsp, unit: "dF")
+        sendEvent(name:"coolingSetpoint", value: tsp, unit: "F")
     }
 }
 
 def tempDown() {
     // increment the setpoint when buttons are pressed on the main tile
     def tsp = device.currentValue("thermostatSetpoint") - 1
-    def tMode = device.currentState("thermostatMode")
+    def tMode = device.currentValue("thermostatMode") as String
     log.debug "Setting thermostatSetpoint to: $tsp"
     log.debug "thermostatMode = $tMode"
-    sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: tsp, unit: "F")
     if(tMode == "heat") {
         log.debug "Setting heatingSetpoint to: $tsp"
-        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "dF")
+        sendEvent(name:"thermostatSetpoint", value: tsp, unit: "F")
     }
     if(tMode == "cool") {
         log.debug "Setting coolingSetpoint to: $tsp"
-        sendEvent(name:"coolingSetpoint", value: tsp, unit: "dF")
+        sendEvent(name:"coolingSetpoint", value: tsp, unit: "F")
     }
 }
 
@@ -135,7 +135,7 @@ def setTemperature(degrees) {
 def setTemperature(Double degrees) {
     // set temperature from other source like a multi senor
     log.trace "setTemperature($degrees)"
-    sendEvent(name:"temperature", value: degrees, unit: "dF")
+    sendEvent(name:"temperature", value: degrees, unit: "F")
 }
 
 def setHeatingSetpoint(degress) {
@@ -146,8 +146,8 @@ def setHeatingSetpoint(degress) {
 def setHeatingSetpoint(Double degrees) {
     // Allow things like google home to adjust setpoint
     log.trace "setHeatingSetpoint($degrees)"
-    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "dF")
-    sendEvent(name:"heatingSetpoint", value: degrees, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "F")
+    sendEvent(name:"heatingSetpoint", value: degrees, unit: "F")
 }
 
 def setCoolingSetpoint(degress) {
@@ -158,6 +158,6 @@ def setCoolingSetpoint(degress) {
 def setCoolingSetpoint(Double degrees) {
     // Allow things like google home to adjust setpoint
     log.trace "setCoolingSetpoint($degrees)"
-    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "dF")
-    sendEvent(name:"coolingSetpoint", value: degrees, unit: "dF")
+    sendEvent(name:"thermostatSetpoint", value: degrees, unit: "F")
+    sendEvent(name:"coolingSetpoint", value: degrees, unit: "F")
 }
