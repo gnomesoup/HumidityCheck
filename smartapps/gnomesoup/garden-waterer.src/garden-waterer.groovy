@@ -58,7 +58,7 @@ preferences {
 
 def installed() {
     log.debug "Installed with settings: ${settings}"
-    initialized()
+    initialize()
 }
 
 def updated() {
