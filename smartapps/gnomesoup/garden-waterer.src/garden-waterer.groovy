@@ -12,7 +12,6 @@
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  * for the specific language governing permissions and limitations under the License.
  */
-
 definition(
     name: "Garden Waterer",
     namespace: "GnomeSoup",
@@ -71,26 +70,28 @@ def initialize() {
     subscribe(soil1, "humidity", moistureHandler)
     subscribe(switch1, "switch", switchHandler)
     state.name = "Garden Waterer"
+    state.soil1Name = soil1.label ? soil1.label : soil1.name
+    state.switch1Name = switch1.label ? switch1.label : switch1.name
 }
 
 def moistureHandler(moistureEvt) {
-    def moistureValue = mositureEvt.value.toInteger()
+    def moistureValue = moistureEvt.value.toInteger()
 
     log.debug("$state.name: moistureHandler called")
-    log.debug("$state.name: ${soil1.label} is ${state.soil1}")
+    log.debug("$state.name: ${state.soil1Name} is ${state.soil1}")
     state.moistureValue = moistureValue
     if(moistureValue <= soilMin && state.switchValue == "off") {
         switch1.on()
         state.switchValue = "on"
-        log.debug("$state.name: Turning ${switch1.label} on")
+        log.debug("$state.name: Turning ${state.switch1Name} on")
     }
     else if(moistureValue >= soilMax && state.switchValue == "on") {
         switch1.off()
         state.switchValue = "off"
-        log.debug("$state.name: Turning ${switch1.label} off")
+        log.debug("$state.name: Turning ${state.switch1Name} off")
     }
     else {
-        log.debug("$state.name: No Action, ${switch1.label} already $state.switchValue")
+        log.debug("$state.name: No Action, ${state.switch1Name} already $state.switchValue")
     }
 }
 
@@ -98,7 +99,7 @@ def switchHandler(switchEvt) {
     def switchValue = switchEvt.value
 
     log.debug("$state.name: switchHandler called")
-    log.debug("$state.name: ${switch1.label} is $switchValue")
+    log.debug("$state.name: ${state.switch1Name} is $switchValue")
     state.switchValue = switchValue
 }
 
